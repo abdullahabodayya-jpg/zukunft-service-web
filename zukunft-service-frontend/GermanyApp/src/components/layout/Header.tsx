@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { homePath, navHref, routePath } from '@/lib/routes';
 import type { Locale, SiteContent } from '@/types/content';
+import { Logo } from '@/components/ui/Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 export interface HeaderProps {
@@ -63,10 +64,7 @@ export function Header({ locale, content }: HeaderProps) {
           href={homePath(locale)}
           className="focus-ring -ms-1 flex shrink-0 items-center gap-2 rounded-md px-1 py-1"
         >
-          {/* The brand name is Latin in both locales and never transliterated. */}
-          <span dir="ltr" className="font-heading text-title text-text-heading">
-            Zukunft&nbsp;Service
-          </span>
+          <Logo variant="asset" height={52} eager />
         </Link>
 
         <nav aria-label={a11y.menuLabel} className="ms-auto hidden min-w-0 lg:block">

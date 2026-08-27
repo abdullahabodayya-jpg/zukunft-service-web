@@ -417,6 +417,26 @@
 
   /* :focus without -visible is never styled - mouse users see nothing. */
 
+  /* ── The hero headline at lg and up ───────────────────────────────────────
+     At `lg` the hero splits into two columns and the headline column drops to
+     roughly half the page, while --text-display-xl keeps growing with the
+     viewport. The room available to the headline therefore COLLAPSES exactly
+     at the breakpoint - about 11em of width below lg, 6.7em at 1024px.
+
+     "Unterschiedliche" is ~6.8em in this face, so between roughly 1024 and
+     1090px it does not fit and the browser breaks it. Re-scaling the token
+     inside the breakpoint keeps at least ~7.5em at every width from 1024 up,
+     which is what stops the break rather than merely making it prettier.
+
+     Arabic keeps its own smaller scale: html[lang="ar"] is more specific than
+     :root, so this never applies there, and Arabic words are short enough not
+     to need it. */
+  @media (width >= 64rem) {
+    :root {
+      --text-display-xl: clamp(4.1875rem, 1.6rem + 4.05vw, 5.25rem); /* 67 → 84 */
+    }
+  }
+
   /* ── German ───────────────────────────────────────────────────────────────
      "Personenstandsdokumente", "Immobilienfinanzierung": German compound
      nouns break a 320px layout without this. */
@@ -426,10 +446,19 @@
     hyphens: auto;
   }
 
+  /* Headings hyphenate too. `hyphens: manual` plus `overflow-wrap: anywhere`
+     was the worst of both: `anywhere` grants a break opportunity at EVERY
+     character, and with hyphenation off the break renders with no hyphen at
+     all - "Unterschiedlich / e", which reads as a typo rather than as a line
+     break. In German a mid-word break without a hyphen is simply wrong.
+
+     `hyphens: auto` lets the browser use its German dictionary and break at a
+     real syllable boundary with a visible hyphen. `break-word` stays as the
+     last resort for a word so long that even hyphenation cannot place it. */
   html[lang="de"] h1,
   html[lang="de"] h2 {
-    hyphens: manual;
-    overflow-wrap: anywhere;
+    hyphens: auto;
+    overflow-wrap: break-word;
   }
 
   /* ── Arabic ───────────────────────────────────────────────────────────────

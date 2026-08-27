@@ -6,8 +6,14 @@ import { ContactStrip } from '@/components/sections/ContactStrip';
 import { ServiceBlocks } from '@/components/sections/ServiceBlocks';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { Photo } from '@/components/ui/Photo';
+import { SERVICE_PHOTOS } from '@/content/shared/photos';
 import { getService, getServices, getSiteContent } from '@/content';
-import { SERVICES_IN_ORDER, serviceIdFromSlug } from '@/content/shared/services.meta';
+import {
+  SERVICES_IN_ORDER,
+  serviceIdFromSlug,
+  siblingServices,
+} from '@/content/shared/services.meta';
 import { LOCALES, isLocale } from '@/lib/locale';
 import { routePath, servicePath } from '@/lib/routes';
 
@@ -49,7 +55,8 @@ export default async function ServiceDetailPage({
   const meta = SERVICES_IN_ORDER.find((entry) => entry.id === serviceId);
   if (meta === undefined) notFound();
 
-  const siblings = SERVICES_IN_ORDER.filter((entry) => entry.id !== serviceId).slice(0, 3);
+  // Office-only: cleaning is a separate arm and must not resurface here.
+  const siblings = siblingServices(serviceId);
   const arrow = locale === 'ar' ? '←' : '→';
 
   return (
@@ -89,12 +96,24 @@ export default async function ServiceDetailPage({
 
           <h1 className="mt-4 text-display-lg text-balance text-text-heading">{service.title}</h1>
           <p className="mt-5 max-w-prose text-lead text-text-secondary">{service.intro}</p>
+
+          {/* Below the intro rather than beside it: the intro paragraph is
+              capped at `max-w-prose` for readability, so a side-by-side split
+              would leave the photo either cramped or floating in dead space at
+              the wide end. Full measure under the copy reads as one block. */}
+          <Photo
+            src={SERVICE_PHOTOS[serviceId]}
+            alt={service.imageAlt}
+            className="mt-10 aspect-[16/9] rounded-xl"
+            sizes="(min-width: 1088px) 1088px, 100vw"
+            eager
+          />
         </div>
       </section>
 
       <section className="bg-surface section">
         <div className="mx-auto max-w-content">
-          <ServiceBlocks blocks={service.blocks} />
+          <ServiceBlocks blocks={service.blocks} layout={service.blockLayout} />
 
           {service.closing === undefined ? null : (
             <p className="mt-10 max-w-prose text-lead text-text-heading">{service.closing}</p>

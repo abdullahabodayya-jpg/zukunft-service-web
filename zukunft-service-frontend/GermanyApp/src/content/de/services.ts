@@ -21,54 +21,94 @@
  */
 
 import type { ServiceContent, ServiceId } from '@/types/content';
+import { CLEANING_TYPES } from './site';
 
 export const deServices: Record<ServiceId, ServiceContent> = {
   authorities: {
     id: 'authorities',
-    eyebrow: 'Leistung 01',
-    title: 'Einbürgerung, Behörden & Dokumente',
-    cardTitle: 'Einbürgerung, Behörden & Dokumente',
+    eyebrow: 'Büroservice',
+    title: 'Geordnete Unterlagen. Klare nächste Schritte.',
+    cardTitle: 'Einbürgerung und offizielle Dokumente',
     cardDescription:
-      'Anträge auf Einbürgerung, Aufenthalt und Meldeangelegenheiten: Wir stellen die Unterlagen zusammen, füllen Formulare mit Ihnen aus und koordinieren die Termine.',
+      'Wir bieten Ihnen professionelle administrative Unterstützung bei Einbürgerungs- und '
+      + 'Aufenthaltsangelegenheiten sowie offiziellen Dokumenten – von der Vorbereitung der '
+      + 'Anträge und Prüfung der Unterlagen bis zur Terminvereinbarung und weiteren '
+      + 'Bearbeitung.',
     imageAlt: 'Sortierte Antragsunterlagen und Formulare auf einem Schreibtisch.',
     intro:
-      'Behördliche Verfahren und Dokumente können kompliziert und zeitaufwendig sein. Wir unterstützen Sie bei der Vorbereitung Ihrer Unterlagen und bei den organisatorischen Schritten rund um Ihr Anliegen.',
+      'Von Einbürgerungsanträgen bis zu Personenstands- und Reisedokumenten unterstützen wir '
+      + 'Sie bei der Organisation der Anforderungen, der Vorbereitung Ihrer Unterlagen und '
+      + 'der administrativen Kommunikation mit zuständigen Stellen. Unsere Unterstützung '
+      + 'umfasst Dokumente aus verschiedenen Ländern, darunter auch syrische und irakische '
+      + 'Unterlagen.',
+    // SC11: one flat list of ten became three groups. Syrian and Iraqi papers
+    // now sit inside a group about foreign documents generally, rather than as
+    // two singled-out bullets - the service covers documents from many
+    // countries, and the grouping says so without making anyone a special case.
     blocks: [
       {
         kind: 'list',
-        id: 'authorities-main',
+        id: 'applications',
+        title: 'Anträge und Einbürgerung',
         layout: 'checks',
         items: [
-          'Unterstützung bei der Vorbereitung von Einbürgerungsanträgen',
-          'Zusammenstellung und Prüfung der erforderlichen Unterlagen',
-          'Hilfe beim Ausfüllen von Formularen und Anträgen',
-          'Unterstützung bei Schriftverkehr und Kommunikation mit Behörden',
-          'Organisation und Beschaffung syrischer Dokumente',
-          'Organisation und Beschaffung irakischer Dokumente',
-          'Unterstützung bei Angelegenheiten rund um syrische und irakische Reisepässe',
-          'Geburtsurkunden, Heiratsurkunden und Personenstandsdokumente',
-          'Register- und Personenstandsauszüge',
-          'Vorbereitung von Unterlagen für Beglaubigungen und weitere amtliche Verfahren',
+          'Unterstützung bei der Vorbereitung des Einbürgerungsantrags und der Strukturierung der einzelnen Schritte.',
+          'Erforderliche Unterlagen zusammenstellen und auf formale Vollständigkeit prüfen.',
+          'Formulare und Anträge anhand Ihrer Angaben ausfüllen.',
+          'Schriftverkehr und administrative Kommunikation mit Behörden organisieren.',
+        ],
+      },
+      {
+        kind: 'list',
+        id: 'civil-status',
+        title: 'Personenstandsdokumente',
+        layout: 'checks',
+        items: [
+          'Anträge auf Geburtsurkunden, Heiratsurkunden und Personenstandsdokumente organisieren.',
+          'Geburtsnachweise und Registerauszüge koordinieren.',
+          'Unterlagen für Beglaubigungen und weitere behördliche Verfahren vorbereiten.',
+        ],
+      },
+      {
+        kind: 'list',
+        id: 'foreign-documents',
+        title: 'Ausländische Dokumente und Reisedokumente',
+        layout: 'checks',
+        items: [
+          'Anforderungen und Abläufe für im Ausland ausgestellte Dokumente organisieren, einschließlich syrischer und irakischer Unterlagen.',
+          'Organisatorische Unterstützung bei syrischen und irakischen Passangelegenheiten.',
+          'Anforderungen und Schritte nach Dokumentenart und zuständiger Stelle ordnen.',
         ],
       },
     ],
+    // SC11: the three groups sit side by side, not down the page.
+    blockLayout: 'grid',
     closing:
-      'Sie wissen nicht, welche Unterlagen Sie benötigen? Sprechen Sie uns an, wir helfen Ihnen, die nächsten Schritte übersichtlich zu strukturieren.',
+      'Sie sind unsicher, welche Unterlagen benötigt werden? Teilen Sie uns die Art Ihres '
+      + 'Anliegens und das Ausstellungsland Ihrer Dokumente mit. Wir unterstützen Sie dabei, '
+      + 'den Einstieg und die nächsten Schritte zu strukturieren.',
+    legalNote:
+      'Die Ausstellung der Dokumente und abschließende Entscheidungen liegen bei den '
+      + 'zuständigen Behörden.',
     seo: {
-      title: 'Einbürgerung, Behörden & Dokumente in Dortmund',
+      title: 'Einbürgerung und offizielle Dokumente in Dortmund',
       description:
-        'Unterstützung bei Einbürgerungsanträgen, Behördenpost, Personenstandsdokumenten sowie syrischen und irakischen Urkunden. Zukunft Service in Dortmund, auf Deutsch und Arabisch.',
+        'Unterstützung bei Einbürgerungsanträgen, Personenstandsdokumenten und im Ausland '
+        + 'ausgestellten Unterlagen, darunter syrische und irakische Dokumente. Zukunft '
+        + 'Service in Dortmund, auf Deutsch und Arabisch.',
     },
     status: 'final',
   },
 
   'marriage-translation': {
     id: 'marriage-translation',
-    eyebrow: 'Leistung 02',
+    eyebrow: 'Büroservice',
     title: 'Ehe, Übersetzungen & internationale Dokumente',
-    cardTitle: 'Ehe, Übersetzungen & internationale Dokumente',
+    cardTitle: 'Eheschließung, Übersetzungen und internationale Dokumente',
     cardDescription:
-      'Eheschließung, Familiennachzug und Urkunden aus dem Ausland. Beglaubigte Übersetzungen organisieren wir über vereidigte Übersetzerinnen und Übersetzer.',
+      'Administrative Unterstützung bei Heiratsunterlagen, Familiennachzug und im Ausland '
+      + 'ausgestellten Dokumenten sowie Organisation beglaubigter Übersetzungen durch '
+      + 'beeidigte oder ermächtigte Übersetzer.',
     imageAlt: 'Ausländische Urkunden mit beigefügter Übersetzung.',
     intro:
       'Wir unterstützen Sie bei ausländischen Dokumenten und organisatorischen Fragen rund um Übersetzung, Beglaubigung und Eheschließung.',
@@ -104,11 +144,13 @@ export const deServices: Record<ServiceId, ServiceContent> = {
 
   'study-visa': {
     id: 'study-visa',
-    eyebrow: 'Leistung 03',
+    eyebrow: 'Büroservice',
     title: 'Studium, Universität & Visa',
-    cardTitle: 'Studium, Universität & Visa',
+    cardTitle: 'Studium und Visa',
     cardDescription:
-      'Bewerbung, Immatrikulation, Sperrkonto und Visumsantrag: Wir bereiten die Unterlagen vor und behalten die Fristen im Blick.',
+      'Administrative Unterstützung bei Hochschulzulassungen sowie Studien- und Touristenvisa. '
+      + 'Nach der Ankunft unterstützen wir Studierende organisatorisch bei Wohnungssuche, '
+      + 'Anmeldung und Immatrikulation.',
     imageAlt: 'Studentin mit Bewerbungsunterlagen vor einem Universitätsgebäude.',
     intro:
       'Sie möchten in Deutschland oder Europa studieren oder benötigen Unterstützung bei der Vorbereitung eines Visumantrags? Wir helfen Ihnen bei den organisatorischen Schritten.',
@@ -131,7 +173,7 @@ export const deServices: Record<ServiceId, ServiceContent> = {
         kind: 'list',
         id: 'visa',
         title: 'Visa',
-        layout: 'two-column',
+        layout: 'columns',
         items: [
           'Studienvisa',
           'Schengen-Visa',
@@ -170,11 +212,13 @@ export const deServices: Record<ServiceId, ServiceContent> = {
 
   finance: {
     id: 'finance',
-    eyebrow: 'Leistung 04',
+    eyebrow: 'Büroservice',
     title: 'Finanzen, Kredite & Vorsorge',
-    cardTitle: 'Finanzen, Kredite & Vorsorge',
+    cardTitle: 'Finanz- und Versicherungsthemen',
     cardDescription:
-      'Wir helfen Ihnen, Unterlagen zu sortieren, Formulare zu verstehen und Termine bei Banken und Versicherungen vorzubereiten, und vermitteln an zugelassene Fachleute.',
+      'Administrative Unterstützung bei Unterlagen und veröffentlichten Anforderungen zu '
+      + 'Versicherungs-, Finanzierungs-, Kredit- und Privatinsolvenzthemen sowie bei Bedarf '
+      + 'Verweis an eine zugelassene Fachstelle.',
     imageAlt: 'Geordnete Finanzunterlagen und ein Taschenrechner auf einem Tisch.',
     intro:
       'Bei finanziellen Themen unterstützen wir Sie organisatorisch und vermitteln bei Bedarf an geeignete Partner oder Fachstellen.',
@@ -231,11 +275,12 @@ export const deServices: Record<ServiceId, ServiceContent> = {
 
   'real-estate': {
     id: 'real-estate',
-    eyebrow: 'Leistung 05',
+    eyebrow: 'Büroservice',
     title: 'Immobilien & Investitionen',
-    cardTitle: 'Immobilien & Investitionen',
+    cardTitle: 'Immobilien und Investitionen',
     cardDescription:
-      'Organisatorische Begleitung rund um Immobilienunterlagen, Behördengänge und Termine. Die Beratung selbst übernehmen zugelassene Maklerinnen und Fachstellen.',
+      'Organisatorische Unterstützung bei Immobilienunterlagen und Terminen sowie Verweis an '
+      + 'zugelassene Fachstellen, wenn Beratung oder Vermittlung erforderlich ist.',
     imageAlt: 'Grundriss und Immobilienunterlagen auf einem Besprechungstisch.',
     intro:
       'Sie möchten eine Immobilie kaufen oder interessieren sich für Investitionsmöglichkeiten? Wir unterstützen Sie bei der Orientierung, Vorbereitung und Vermittlung an passende Ansprechpartner.',
@@ -280,40 +325,37 @@ export const deServices: Record<ServiceId, ServiceContent> = {
 
   cleaning: {
     id: 'cleaning',
-    eyebrow: 'Leistung 06',
-    title: 'Reinigungsservice',
+    eyebrow: 'Reinigungsservice',
+    title: 'Sauberkeit, die man sieht. Service, auf den Sie sich verlassen können.',
     cardTitle: 'Reinigungsservice',
     cardDescription:
-      'Unterhaltsreinigung, Grundreinigung und Reinigung nach Umzug oder Renovierung, für Privathaushalte, Büros und Praxen in Dortmund und Umgebung.',
-    imageAlt: 'Gereinigtes, helles Büro mit aufgeräumten Schreibtischen.',
+      'Professionelle Reinigung für Privathaushalte, Büros und gewerbliche Objekte, einmalig '
+      + 'oder regelmäßig.',
+    imageAlt: 'Helles, frisch gereinigtes Büro mit aufgeräumten Arbeitsplätzen.',
     intro:
-      'Neben unseren Büro- und Servicedienstleistungen bieten wir professionelle Reinigung für Privatkunden, Unternehmen und Einrichtungen.',
+      'Wir bieten professionelle Reinigung für Privathaushalte, Büros und gewerbliche Objekte '
+      + '– einmalig oder regelmäßig. Nach der Besichtigung stimmen wir Leistungsumfang und '
+      + 'Termine klar mit Ihnen ab und führen die vereinbarten Arbeiten sorgfältig aus.',
     blocks: [
       {
         kind: 'list',
-        id: 'cleaning-places',
+        id: 'cleaning-types',
         title: 'Wir reinigen unter anderem',
-        layout: 'two-column',
-        items: [
-          'Büros',
-          'Wohnungen',
-          'Häuser',
-          'Schulen',
-          'Restaurants',
-          'Geschäfte',
-          'Praxen',
-          'Gewerberäume',
-          'Treppenhäuser',
-          'Gemeinschaftsflächen',
-        ],
+        layout: 'columns',
+        // Derived from the single source, so this page and the home section can
+        // never disagree about which eight types exist.
+        items: CLEANING_TYPES.map((type) => type.title),
       },
     ],
     closing:
-      'Ob einmalige Reinigung oder regelmäßiger Reinigungsservice, wir finden eine passende Lösung für Ihren Bedarf.',
+      'Jedes Objekt hat eigene Anforderungen. Nach der Besichtigung stimmen wir einen klaren '
+      + 'Leistungsumfang und passende Termine mit Ihnen ab – für eine einmalige oder '
+      + 'regelmäßige Reinigung.',
     seo: {
       title: 'Reinigungsservice in Dortmund für Büro, Wohnung und Gewerbe',
       description:
-        'Professionelle Reinigung für Büros, Wohnungen, Häuser, Praxen, Schulen und Gewerberäume in Dortmund. Einmalig oder regelmäßig.',
+        'Professionelle Reinigung für Wohnungen, Büros, Praxen, Schulen, Restaurants und '
+        + 'Gewerbeobjekte in Dortmund. Einmalig oder regelmäßig, Angebot nach Besichtigung.',
     },
     status: 'final',
   },

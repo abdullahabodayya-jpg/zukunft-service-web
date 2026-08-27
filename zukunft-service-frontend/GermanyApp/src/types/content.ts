@@ -35,14 +35,34 @@ export type ContentStatus = 'final' | 'draft-needs-client-approval';
    SERVICES - the six verticals
    ═══════════════════════════════════════════════════════════════════════════ */
 
-export const SERVICE_IDS = [
-  'authorities', // 01 Einbürgerung, Behörden & Dokumente
-  'marriage-translation', // 02 Ehe, Übersetzungen & int. Dokumente
-  'study-visa', // 03 Studium, Universität & Visa
-  'finance', // 04 Finanzen, Kredite & Vorsorge
-  'real-estate', // 05 Immobilien & Investitionen
-  'cleaning', // 06 Reinigungsservice
+/**
+ * The five OFFICE services. These, and only these, appear in the services grid.
+ *
+ * Cleaning is deliberately absent: the client separated the two arms, so the
+ * grid shows office work and cleaning gets its own section and page.
+ */
+export const OFFICE_SERVICE_IDS = [
+  'authorities', // Einbürgerung, Behörden & Dokumente
+  'marriage-translation', // Ehe, Übersetzungen & int. Dokumente
+  'study-visa', // Studium, Universität & Visa
+  'finance', // Finanz- und Versicherungsthemen
+  'real-estate', // Immobilien & Investitionen
 ] as const;
+
+export type OfficeServiceId = (typeof OFFICE_SERVICE_IDS)[number];
+
+/**
+ * EVERY service that has content and a detail page - the office five plus
+ * cleaning.
+ *
+ * Keeping cleaning in this list is what stops the split from silently breaking
+ * the contact form. The form's category enum is derived from SERVICE_IDS, and
+ * its dropdown option is typed only as `{ value: string }`, so dropping
+ * cleaning here would compile, build and deploy cleanly and then reject every
+ * cleaning enquiry at runtime. Customers still ask about cleaning; the grid is
+ * a presentation choice, not a statement about what the business does.
+ */
+export const SERVICE_IDS = [...OFFICE_SERVICE_IDS, 'cleaning'] as const;
 
 export type ServiceId = (typeof SERVICE_IDS)[number];
 
@@ -67,7 +87,7 @@ export type IconName =
   | 'GraduationCap'
   | 'Landmark'
   | 'Building2'
-  | 'SprayCan'
+  | 'CleaningCart'
   | 'HandHeart'
   | 'Layers'
   | 'MessagesSquare'
@@ -83,12 +103,23 @@ export type IconName =
   | 'ShieldCheck'
   | 'Info';
 
+/**
+ * Which edge of a photo survives the crop.
+ *
+ * LOGICAL BY DESIGN. `start` and `end` flip with the reading direction, so a
+ * subject anchored to the reading edge stays anchored in both German and
+ * Arabic. `Photo` is the only component allowed to turn these into the
+ * physical `object-*` classes CSS actually requires - see the note there for
+ * why the RTL gate cannot catch a mistake made anywhere else.
+ */
+export type ImageFocal = 'center' | 'top' | 'start' | 'end';
+
 export interface ImageRef {
   src: string;
   width: number;
   height: number;
   /** `alt` is per-locale, so it lives in the content, never here. */
-  focal?: 'center' | 'top' | 'start' | 'end';
+  focal?: ImageFocal;
 }
 
 /**
@@ -99,7 +130,6 @@ export interface ImageRef {
  */
 export interface ServiceMeta {
   id: ServiceId;
-  order: 1 | 2 | 3 | 4 | 5 | 6;
   /** German slug, used in BOTH locales. Percent-encoded Arabic looks broken
    *  when pasted into WhatsApp, which is this audience's sharing channel. */
   slug: string;
@@ -128,7 +158,7 @@ export interface ListBlock extends BlockBase {
   title?: string;
   intro?: string;
   items: readonly string[];
-  layout?: 'checks' | 'two-column' | 'plain';
+  layout?: 'checks' | 'columns' | 'plain';
 }
 
 /** Visually distinct callout. The "Auch nach der Ankunft…" block is this. */
@@ -178,7 +208,7 @@ export interface FaqItem {
 
 export interface ServiceContent {
   id: ServiceId;
-  /** "Leistung 03" · "الخدمة 03" */
+  /** Section label, e.g. "Büroservice" · "الخدمات المكتبية". Never a number. */
   eyebrow: string;
   /** <h1>. Plain domain name - the intro paragraph carries the benefit. */
   title: string;
@@ -188,6 +218,14 @@ export interface ServiceContent {
   intro: string;
   /** Length may differ per locale: DE finance has 3 blocks, AR has 1. */
   blocks: readonly ServiceBlock[];
+  /**
+   * How the blocks are arranged. 'stack' (the default) runs them down the page.
+   * 'grid' lays co-equal groups side by side, which SC11 requires for the
+   * Einbuergerung page: three columns on desktop, two plus a full-width third
+   * on tablet, stacked on mobile. Only meaningful when every block is a short
+   * titled list - a highlight or prose block needs the full measure.
+   */
+  blockLayout?: 'stack' | 'grid';
   closing?: string;
   /** Hedging text. Mandatory in practice wherever legalSensitivity is 'high'. */
   legalNote?: string;
@@ -369,8 +407,6 @@ export interface HeroContent {
 /** The two arms of the business: Büroservice / Reinigungsservice. */
 export interface PillarContent {
   id: ServiceArm;
-  /** '01' / '02' - rendered as a numeral, never mirrored. */
-  index: string;
   icon: IconName;
   title: string;
   body: string;
@@ -393,16 +429,45 @@ export interface ProcessContent {
 
 export interface ServicesGridContent {
   heading: SectionHeading;
-  /** "Mehr zu dieser Leistung →" - the arrow flips per locale, so it is
-   *  content, not decoration, and lives here rather than in CSS. */
+  /** SC10: "Klare Abläufe · Persönliche Betreuung · Deutsch und Arabisch" */
+  trustBadges: readonly string[];
+  /**
+   * "Mehr zur Leistung" / "تفاصيل الخدمة".
+   *
+   * NO arrow glyph in this string. The component appends one and flips it per
+   * locale. An arrow baked in here is how the German label ended up rendering
+   * two of them.
+   */
   detailLabel: string;
   note?: string;
 }
 
+/**
+ * One of the eight cleaning types.
+ *
+ * Defined once per locale and consumed by BOTH the home section and the
+ * cleaning service page. Before this existed the two lists had already drifted:
+ * the home page carried ten one-word nouns in German and six sentences in
+ * Arabic, while the detail page carried ten of its own. One array, one truth.
+ */
+export interface CleaningType {
+  id: string;
+  title: string;
+  description: string;
+  /** Photo still to be supplied by the client - see SC13. */
+  imageAlt: string;
+}
+
 export interface CleaningContent {
   heading: SectionHeading;
-  items: readonly string[];
+  /** The eight types. Home and detail page render the same array. */
+  types: readonly CleaningType[];
+  /** "Zuverlässiges Team · Klare Termine · ..." */
+  trustBar: readonly string[];
+  ctaTitle: string;
+  ctaBody: string;
   cta: Cta;
+  closing: string;
   imageAlt: string;
 }
 
@@ -411,14 +476,32 @@ export interface WhySectionContent {
   points: readonly WhyPoint[];
 }
 
-/** "Was wir tun – und was nicht." The legal shield and a trust signal at once. */
+/**
+ * The transparency block: what we actually do (SC6), and who legally has to do
+ * the rest (SC7).
+ *
+ * The old shape was a do/don't pair. The client replaced it: the "don't" list
+ * is now stated positively as "for each matter, the right specialist", because
+ * a wall of negatives reads as a disclaimer while the same facts framed as
+ * routing read as competence. The legal content is identical either way.
+ */
 export interface ScopeContent {
   heading: SectionHeading;
-  doTitle: string;
-  doItems: readonly string[];
-  dontTitle: string;
-  dontItems: readonly string[];
-  /** "Wir bieten keine Rechts-, Steuer- oder Versicherungsberatung…" */
+  /** "Praktische und strukturierte Unterstützung" */
+  supportTitle: string;
+  /** The six things we do. */
+  supportPoints: readonly string[];
+  /** Cleaning gets its own strip and is never merged into the office list. */
+  cleaningStrip: string;
+  /** "Für jedes Anliegen die passende Fachstelle" */
+  referralTitle: string;
+  referralIntro: string;
+  /** Five categories, each naming who may lawfully provide it. */
+  referralCategories: readonly string[];
+  /** Closing reassurance box. */
+  trustTitle: string;
+  trustBody: string;
+  /** The site-wide disclaimer. Shared with the contact form. */
   notice: string;
 }
 
@@ -431,6 +514,10 @@ export interface QuickContactStrings {
 export interface ContactContent {
   heading: SectionHeading;
   quickContact: QuickContactStrings;
+  /** SC8: asks the visitor NOT to attach documents to a first message. This is
+   *  data minimisation - an unsolicited passport scan in an inbox is a problem
+   *  the business then owns. */
+  privacyNote: string;
   /** "Außerhalb der Öffnungszeiten: schreiben Sie uns - wir melden uns am
    *  nächsten Werktag." Turns a closed office into a captured lead. */
   responseNote: string;

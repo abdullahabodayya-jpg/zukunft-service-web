@@ -1,8 +1,9 @@
 /**
  * The two arms of the business, stated plainly.
  *
- * The numerals 01/02 are content, not decoration - they come from the content
- * file so they never mirror or renumber under RTL.
+ * The 01/02 numerals were removed in SC1 along with every other service number.
+ * Do not reintroduce them: the icon and the title carry the distinction, and a
+ * numeral here implies an ordering the two arms of the business do not have.
  */
 
 import { Icon } from '@/components/ui/Icon';
@@ -19,12 +20,7 @@ export function Pillars({ locale, content }: { locale: Locale; content: SiteCont
             key={pillar.id}
             className="flex flex-col gap-4 rounded-2xl border border-border-subtle bg-surface-raised p-8"
           >
-            <div className="flex items-center gap-3">
-              <span className="font-heading text-display-sm text-brand-gold-700 tabular-nums">
-                {pillar.index}
-              </span>
-              <Icon name={pillar.icon} className="text-brand" />
-            </div>
+            <Icon name={pillar.icon} className="text-brand" />
             <h2 className="text-display-sm text-text-heading">{pillar.title}</h2>
             <p className="text-body text-text-secondary">{pillar.body}</p>
             <Link

@@ -44,4 +44,10 @@ export function unapprovedServices(locale: Locale): readonly ServiceId[] {
 }
 
 export { NAP, ADDRESS_ONE_LINE, hasUnresolvedPlaceholders } from './shared/nap';
-export { SERVICES_IN_ORDER, SERVICE_META, serviceSlug } from './shared/services.meta';
+export {
+  SERVICES_IN_ORDER,
+  OFFICE_SERVICES_IN_ORDER,
+  SERVICE_META,
+  serviceSlug,
+  siblingServices,
+} from './shared/services.meta';

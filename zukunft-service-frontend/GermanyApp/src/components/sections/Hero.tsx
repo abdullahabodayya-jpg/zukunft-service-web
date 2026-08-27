@@ -9,6 +9,10 @@
 
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { Photo } from '@/components/ui/Photo';
+import { HERO_PHOTO } from '@/content/shared/photos';
+import { photoExists } from '@/lib/photo';
+import { Logo } from '@/components/ui/Logo';
 import { routePath } from '@/lib/routes';
 import type { Locale, SiteContent } from '@/types/content';
 
@@ -55,8 +59,15 @@ export function Hero({ locale, content }: HeroProps) {
           </ul>
         </div>
 
-        {/* Right panel. No photography yet - the client has not supplied images,
-            so this is a typographic panel rather than a grey placeholder box. */}
+        {/* Right panel. The photograph bleeds to the panel's top edge and the
+            brand block sits beneath it.
+
+            UNLIKE the cleaning grid, a missing file here renders NOTHING rather
+            than a tinted plate: the plate is a light fixed-palette colour and
+            this panel is dark, so an unresolved hero would read as a broken
+            asset in the most prominent position on the site. Without the file
+            the panel is exactly what it was before - a finished typographic
+            panel, not a gap. */}
         {/* data-surface="dark" flips the whole token set for this subtree, so the
             SAME semantic classes used everywhere else resolve to their dark
             values here. Do not reach for bg-surface-inverse on this element:
@@ -64,16 +75,25 @@ export function Hero({ locale, content }: HeroProps) {
             to near-white and the panel turns white with white text on it. */}
         <div
           data-surface="dark"
-          className="relative overflow-hidden rounded-2xl bg-surface p-8 shadow-lg sm:p-10"
+          className="relative overflow-hidden rounded-2xl bg-surface shadow-lg"
         >
+          {photoExists(HERO_PHOTO) ? (
+            <Photo
+              src={HERO_PHOTO}
+              alt={hero.imageAlt}
+              className="aspect-[16/10]"
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              eager
+            />
+          ) : null}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -top-16 -end-16 size-56 rounded-full bg-accent/15"
           />
-          <div className="relative flex flex-col gap-6">
-            <span dir="ltr" className="font-heading text-display-sm text-accent-text">
-              Zukunft&nbsp;Service
-            </span>
+          <div className="relative flex flex-col gap-6 p-8 sm:p-10">
+            {/* data-surface="dark" on the panel flips the tokens, so the mark
+                and the gold pick up their dark-scope values automatically. */}
+            <Logo variant="full" markSize={40} />
             <p className="text-lead text-text-secondary">{content.meta.slogan}</p>
             <ul className="flex flex-col gap-3 border-t border-border-subtle pt-6">
               {content.pillars.map((pillar) => (

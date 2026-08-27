@@ -1,38 +1,70 @@
+'use client';
+
 /**
  * Floating WhatsApp button.
  *
  * WhatsApp is this audience's default channel, and someone anxious about a
- * Behördenbrief is far likelier to send a voice note than to fill in a form.
- * So the channel they already trust follows them down the page.
+ * Behördenbrief is likelier to send a voice note than fill in a form. So the
+ * channel they already trust follows them down the page.
+ *
+ * IT HIDES INSIDE THE CONTACT SECTION. That section already has a full-size
+ * WhatsApp button, so the floating one was a duplicate that also covered the
+ * bottom corner of the address card. The client called this out in the change
+ * report; it was a real defect, not a preference.
+ *
+ * The observer watches #kontakt, which only exists on pages that render the
+ * contact strip. Everywhere else the button simply stays visible - no per-route
+ * configuration to keep in sync.
  *
  * COLOUR: WhatsApp's brand #25d366 is 1.98:1 on white and fails WCAG outright.
- * This uses WhatsApp's own darker #128c7e (4.14:1) - still unmistakably
- * WhatsApp, actually readable.
+ * This uses WhatsApp's own darker #128c7e (4.14:1) - unmistakably WhatsApp,
+ * actually readable.
  *
- * POSITION is logical (`end-`), so it sits bottom-right in German and
- * bottom-left in Arabic without an RTL override.
+ * POSITION is logical (`end-`), so it mirrors in Arabic with no RTL override.
  */
 
+import { useEffect, useState } from 'react';
+
 import { NAP } from '@/content/shared/nap';
+import { cn } from '@/lib/cn';
 import { waLink } from '@/lib/format';
 import type { SiteContent } from '@/types/content';
 
 export function WhatsAppFab({ content }: { content: SiteContent }) {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const contact = document.getElementById('kontakt');
+    if (contact === null) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry !== undefined) setHidden(entry.isIntersecting);
+      },
+      // Any meaningful part of the section on screen is enough to stand down.
+      { threshold: 0.15 },
+    );
+
+    observer.observe(contact);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <a
       href={waLink(NAP.phoneDigits, content.hero.primaryCta.label)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={content.a11y.whatsappFab}
-      className={
-        'focus-ring animate-fab-in fixed bottom-5 end-5 z-40 inline-flex size-14 '
-        + 'items-center justify-center rounded-pill bg-[#128c7e] text-white '
-        + 'shadow-fab transition-transform duration-200 hover:scale-105 '
-        + 'active:scale-95 print:hidden'
-      }
+      aria-hidden={hidden}
+      tabIndex={hidden ? -1 : undefined}
+      className={cn(
+        'focus-ring animate-fab-in fixed bottom-5 end-5 z-40 inline-flex size-14',
+        'items-center justify-center rounded-pill bg-[#128c7e] text-white shadow-fab',
+        'transition-all duration-300 hover:scale-105 active:scale-95 print:hidden',
+        hidden && 'pointer-events-none translate-y-4 opacity-0',
+      )}
     >
-      {/* WhatsApp glyph inlined: lucide has no brand marks, and one <svg> beats
-          pulling in an icon package for a single logo. */}
       <svg
         width="26"
         height="26"

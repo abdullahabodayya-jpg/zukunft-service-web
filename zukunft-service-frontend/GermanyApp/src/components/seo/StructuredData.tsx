@@ -49,6 +49,12 @@ export function StructuredData({ locale, content }: { locale: Locale; content: S
     name: NAP.tradeName,
     description: content.meta.homeDescription,
     url: `${SITE_URL}/${locale}`,
+    // Google uses `logo` for the knowledge panel and `image` for rich results.
+    // Both must be absolute, which metadataBase guarantees.
+    // The client's own logo file, not the drawn fallback: this is what Google
+    // reads for the knowledge panel, so it should be the real brand asset.
+    logo: `${SITE_URL}/logo-lockup.png`,
+    image: `${SITE_URL}/logo-lockup.png`,
     telephone: NAP.phoneE164,
     email: NAP.email,
     address: {

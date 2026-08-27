@@ -6,8 +6,14 @@
  * silently fails to render.
  *
  * List layouts are content decisions, not styling whims. `checks` is for
- * "things we do for you" (each item earns a tick), `two-column` is for short
- * enumerations like visa types or premises, and `plain` is the fallback.
+ * "things we do for you" (each item earns a tick), `columns` is for short
+ * enumerations like visa types or cleaning premises, and `plain` is the
+ * fallback. `columns` goes 1 -> 2 -> 3 across breakpoints, per SC13.
+ *
+ * SC11 additionally asks the Einbuergerung page to set its three groups side by
+ * side rather than down the page. That is opt-in per service (`blockLayout`),
+ * never inferred from the block count: study-visa also has three blocks, but one
+ * of them is a highlight that needs the full measure to stay readable.
  */
 
 import { Icon } from '@/components/ui/Icon';
@@ -19,7 +25,7 @@ function ListItems({
   layout,
 }: {
   items: readonly string[];
-  layout: 'checks' | 'two-column' | 'plain';
+  layout: 'checks' | 'columns' | 'plain';
 }) {
   if (layout === 'checks') {
     return (
@@ -38,7 +44,8 @@ function ListItems({
     <ul
       className={cn(
         'flex flex-col gap-2',
-        layout === 'two-column' && 'sm:grid sm:grid-cols-2 sm:gap-x-8',
+        // SC13: one column on mobile, two on tablet, three on desktop.
+        layout === 'columns' && 'sm:grid sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3',
       )}
     >
       {items.map((item) => (
@@ -119,11 +126,40 @@ function Block({ block }: { block: ServiceBlock }) {
   }
 }
 
-export function ServiceBlocks({ blocks }: { blocks: readonly ServiceBlock[] }) {
+export function ServiceBlocks({
+  blocks,
+  layout = 'stack',
+}: {
+  blocks: readonly ServiceBlock[];
+  layout?: 'stack' | 'grid';
+}) {
+  if (layout === 'stack') {
+    return (
+      <div className="flex flex-col gap-10">
+        {blocks.map((block) => (
+          <Block key={block.id} block={block} />
+        ))}
+      </div>
+    );
+  }
+
+  // SC11: three columns on desktop, two on tablet with a full-width remainder
+  // so the odd group never sits alone in a half-width column, stacked on
+  // mobile. The span is computed from the count, so a fourth group added later
+  // still falls into a tidy 2x2 on tablet without touching this file.
+  const isOdd = blocks.length % 2 === 1;
+
   return (
-    <div className="flex flex-col gap-10">
-      {blocks.map((block) => (
-        <Block key={block.id} block={block} />
+    <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+      {blocks.map((block, index) => (
+        <div
+          key={block.id}
+          className={cn(
+            isOdd && index === blocks.length - 1 && 'md:col-span-2 lg:col-span-1',
+          )}
+        >
+          <Block block={block} />
+        </div>
       ))}
     </div>
   );

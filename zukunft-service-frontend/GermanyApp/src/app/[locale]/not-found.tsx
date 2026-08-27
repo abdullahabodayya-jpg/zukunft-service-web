@@ -32,7 +32,9 @@ export default function NotFound() {
                 dir={DIRECTION[locale]}
                 className="flex flex-col items-start gap-4 rounded-xl border border-border-subtle bg-surface-raised p-7"
               >
-                <h2 className="text-display-sm text-text-heading">{content.meta.siteName}</h2>
+                <h2 dir="ltr" className="font-heading text-display-sm text-text-heading">
+                  {content.meta.siteName}
+                </h2>
                 <p className="text-body text-text-secondary">{content.meta.slogan}</p>
                 <Link
                   href={`/${locale}`}

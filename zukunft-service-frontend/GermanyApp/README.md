@@ -179,10 +179,27 @@ therefore **public**. Never put a secret behind that prefix.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | `https://zukunftservice.de` | canonical URLs, sitemap, Open Graph |
+| `NEXT_PUBLIC_SITE_URL` | see below | canonical URLs, sitemap, Open Graph |
 | `NEXT_PUBLIC_CONTACT_TRANSPORT` | `mock` | `mock` or `http` |
 | `NEXT_PUBLIC_CONTACT_ENDPOINT` | empty | where the form POSTs when transport is `http` |
 | `CONTACT_RECIPIENT_EMAIL` | — | server-side only; the inbox enquiries go to |
+
+### How the site origin is resolved
+
+`NEXT_PUBLIC_SITE_URL` is optional. [`src/lib/site-url.ts`](./src/lib/site-url.ts)
+resolves the origin in this order, taking the first that parses:
+
+1. `NEXT_PUBLIC_SITE_URL` — **set this to `https://zukunftservice.de` at launch**
+2. `VERCEL_PROJECT_PRODUCTION_URL` — injected by Vercel, no configuration needed
+3. `https://zukunftservice.de` — the fallback
+
+So a Vercel deployment labels itself correctly with nothing configured. The
+current deployment is **https://germany-app-2ac1.vercel.app** — but that host is
+not written down anywhere in the source, deliberately. Vercel mints a new one
+each time the project is recreated (this project has had three so far), and a
+hostname baked into a file goes stale silently: wrong canonical tags, a sitemap
+full of dead URLs, and JSON-LD pointing at nothing. Nothing errors, it is just
+quietly wrong. Reading the host Vercel injects avoids the whole class of bug.
 
 Phone, email and postal address are **not** environment variables. They live in
 [`src/content/shared/nap.ts`](./src/content/shared/nap.ts), because the footer,
@@ -265,28 +282,34 @@ All six services carry the client's full PDF content in both languages. The
 German is the client's own verbatim wording. The Arabic follows their Arabic
 PDF's structure, which genuinely differs from the German, and every Arabic
 service is marked `draft-needs-client-approval` — `unapprovedServices('ar')`
-reports them so a release check can block on it.
+lists them, so the client can be walked through exactly what needs signing off.
 
-### Still needed from the client before public launch
+### Still owed by the client
 
-| Item | Blocks | Goes in |
+None of these is code. None of them is work for the backend developer, and none
+of them stops the site building, deploying or running.
+
+| Item | Where it shows | Goes in |
 |---|---|---|
-| Legal name incl. legal form | Impressum (§ 5 DDG) | `src/content/shared/nap.ts` |
-| Managing director / owner | Impressum (§ 5 DDG) | `src/content/shared/nap.ts` |
 | Register court + number, USt-IdNr. | Impressum, if applicable | `src/content/shared/nap.ts` |
-| Arabic sign-off by a named person | launch | `src/content/ar/services.ts` |
-| Photography and logo source files | hero and cards | `public/` |
+| Arabic sign-off by a named person | regulated service copy | `src/content/ar/services.ts` |
+| Named sign-off on the Arabic copy | regulated service pages | `src/content/ar/services.ts` |
 
-**Do not deploy this to a public URL yet.** The Impressum renders `«…»`
-placeholders for the fields above. Those are mandatory under § 5 DDG, and a
-defective Impressum on a live German commercial site is actionable under
-§ 3a UWG. For a preview, use your host's password protection — on Vercel that is
-Settings → Deployment Protection.
+The site builds, deploys and runs with these outstanding — none of them is a
+technical dependency and none of them is work for the backend developer. The
+three Impressum fields are the client's own registration data; until they
+arrive the Impressum shows a notice in place of them.
 
-**Note for the client:** the confirmed opening hours (Mo–Fr 10:00–16:00) differ
-from the hours their current live draft publishes (Thu 10–15, Fri 10–13). This
-site uses the confirmed hours. Google surfaces these directly in Search and
-Maps, so the other site should be corrected.
+They do need to be filled before the site is advertised publicly: § 5 DDG makes
+them mandatory on a German commercial site. That is a business step for the
+client, not a build step. If you want the site online while waiting, Vercel's
+Settings → Deployment Protection gives you a password-gated URL.
+
+**Opening hours:** Mo–We 10:00–16:00, Thu 10:00–15:00, Fri 10:00–13:00, closed
+at the weekend. These were corrected by the client in the SC1–SC15 change report
+(SC8) and re-confirmed on 24 Aug 2026. They feed `openingHoursSpecification` in
+the LocalBusiness JSON-LD, which Google prints directly in Search and Maps, so
+do not tidy them back into one Mo–Fr range.
 
 ---
 

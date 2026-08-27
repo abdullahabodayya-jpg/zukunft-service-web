@@ -17,7 +17,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import type { SiteContent } from '@/types/content';
+import type { CleaningType, SiteContent } from '@/types/content';
 
 /**
  * The standing scope boundary. Appears on the home page, on the three
@@ -25,10 +25,77 @@ import type { SiteContent } from '@/types/content';
  * everywhere, so it can never drift into a claim in one place and a hedge in
  * another.
  */
+/**
+ * SC13: the eight cleaning types, defined ONCE.
+ *
+ * Both the home section and the cleaning service page render this array. They
+ * previously carried separate lists that had already drifted: ten one-word
+ * nouns here, six sentences in Arabic, ten more on the detail page.
+ *
+ * Each entry carries `imageAlt` because SC13 requires a photo per card. The
+ * photos are not in the repo - the client supplies them - so the alt text is
+ * written first and the image slot fills in once the files land.
+ */
+export const CLEANING_TYPES: readonly CleaningType[] = [
+  {
+    id: 'homes',
+    title: 'Häuser und Wohnungen',
+    description: 'Gründliche einmalige oder regelmäßige Reinigung verschiedener Wohnbereiche.',
+    imageAlt: 'Helle, moderne Wohnung nach der Reinigung, ohne Personen.',
+  },
+  {
+    id: 'offices',
+    title: 'Büros und Praxen',
+    description: 'Strukturierte Reinigung von Arbeits- und Empfangsbereichen nach Vereinbarung.',
+    imageAlt: 'Aufgeräumter Empfangsbereich einer Praxis, ohne Personen.',
+  },
+  {
+    id: 'schools',
+    title: 'Schulen',
+    description: 'Strukturierte Reinigung von Unterrichts- und Gemeinschaftsbereichen.',
+    imageAlt: 'Sauberer Klassenraum oder Schulflur, ohne Personen.',
+  },
+  {
+    id: 'restaurants',
+    title: 'Restaurants',
+    description: 'Sorgfältige Reinigung von Arbeits- und Gästebereichen nach Vereinbarung.',
+    imageAlt: 'Sauberes, eingedecktes Restaurant, ohne Gäste.',
+  },
+  {
+    id: 'retail',
+    title: 'Geschäfte und Gewerbeobjekte',
+    description:
+      'Reinigung von Verkaufs- und Arbeitsbereichen, abgestimmt auf Nutzung und Betriebszeiten.',
+    imageAlt: 'Saubere Verkaufsfläche eines Geschäfts, ohne Personen.',
+  },
+  {
+    id: 'move-out',
+    title: 'Umzugs- und Renovierungsreinigung',
+    description:
+      'Gründliche Reinigung nach Umzug oder Renovierungsarbeiten, damit die Räume wieder '
+      + 'bezugs- oder nutzungsbereit sind.',
+    imageAlt: 'Leerer, frisch gereinigter Raum nach Renovierung, ohne Handwerker.',
+  },
+  {
+    id: 'common-areas',
+    title: 'Eingänge, Treppenhäuser und Gemeinschaftsflächen',
+    description: 'Regelmäßige Pflege stark genutzter Bereiche für einen gepflegten Eindruck.',
+    imageAlt: 'Sauberes Treppenhaus oder Hauseingang, ohne Personen.',
+  },
+  {
+    id: 'windows',
+    title: 'Fenster- und Glasreinigung',
+    description:
+      'Sorgfältige Reinigung von Fenstern und Glasflächen für einen klaren, gepflegten Eindruck.',
+    imageAlt: 'Klar geputzte Fensterfront, ohne Personen.',
+  },
+];
+
 const HEDGE_NOTICE =
-  'Wir bieten organisatorische und sprachliche Unterstützung. Wir erbringen keine Rechts-, '
-  + 'Steuer- oder Versicherungsberatung. Wo eine fachliche Beratung erforderlich ist, '
-  + 'vermitteln wir an geeignete Fachstellen und Partner.';
+  'Wir bieten administrative, organisatorische und sprachliche Unterstützung und verweisen '
+  + 'bei Bedarf an zugelassene Fachstellen. Wir bieten keine Rechts-, Steuer-, Versicherungs- '
+  + 'oder Anlageberatung, vermitteln keine Kredite oder Finanzierungen und garantieren keine '
+  + 'behördlichen Entscheidungen.';
 
 export const deSite: SiteContent = {
   meta: {
@@ -98,11 +165,13 @@ export const deSite: SiteContent = {
 
   hero: {
     eyebrow: 'Dienstleistungen & Reinigung in Dortmund',
-    headline: 'Viele Anliegen. Ein Ansprechpartner.',
+    headline: 'Unterschiedliche Anliegen. Ein Service, auf den Sie sich verlassen können.',
     lead:
-      'Ob Behörden, Dokumente, Studium, Visa, Finanzen, Immobilien oder Reinigung: '
-      + 'Zukunft Service unterstützt Sie bei organisatorischen und alltäglichen Anliegen – '
-      + 'persönlich, verständlich und Schritt für Schritt.',
+      'Wir unterstützen Sie kompetent und strukturiert bei Behördenangelegenheiten, '
+      + 'Übersetzungen, Studium und Visa sowie bei Finanz- und Immobilienthemen. Zusätzlich '
+      + 'bieten wir einen eigenständigen Reinigungsservice für private und gewerbliche '
+      + 'Objekte – sorgfältig und zuverlässig ausgeführt. Was auch immer Ihr Anliegen ist: '
+      + 'Unser Team hört Ihnen zu und begleitet Sie Schritt für Schritt.',
     primaryCta: {
       label: 'Anliegen schildern',
       hint: 'Unverbindlich und kostenlos anfragen',
@@ -115,15 +184,17 @@ export const deSite: SiteContent = {
       { id: 'languages', icon: 'MessagesSquare', label: 'Wir sprechen Arabisch · نتحدث العربية' },
       { id: 'steps', icon: 'Route', label: 'Klare nächste Schritte' },
     ],
+    // Rewritten with the photograph: the whole set is deliberately free of
+    // people, so the old "zwei Personen" wording described a picture that does
+    // not exist. Alt text has to match the image that actually ships.
     imageAlt:
-      'Zwei Personen sichten gemeinsam Unterlagen an einem hellen Holztisch im Büro von '
-      + 'Zukunft Service.',
+      'Unterlagen, ein Notizbuch und ein Schlüsselbund, geordnet auf einem hellen '
+      + 'Holztisch am Fenster.',
   },
 
   pillars: [
     {
       id: 'office',
-      index: '01',
       icon: 'FileText',
       title: 'Büroservice',
       body:
@@ -134,8 +205,7 @@ export const deSite: SiteContent = {
     },
     {
       id: 'cleaning',
-      index: '02',
-      icon: 'SprayCan',
+      icon: 'CleaningCart',
       title: 'Reinigungsservice',
       body:
         'Professionelle Reinigung für Privatkunden, Unternehmen und Einrichtungen – '
@@ -182,65 +252,78 @@ export const deSite: SiteContent = {
 
   services: {
     heading: {
-      eyebrow: 'Leistungen',
-      title: 'Wie können wir Ihnen helfen?',
+      eyebrow: 'Büroservice',
+      title: 'Sie schildern Ihr Anliegen. Wir strukturieren die nächsten Schritte.',
       lead:
-        'Wir ordnen Ihr Anliegen und helfen Ihnen, die passenden nächsten Schritte zu finden.',
+        'Wir bieten Ihnen strukturierte administrative Unterstützung bei '
+        + 'Behördenangelegenheiten, Übersetzungen, Studium und Visa sowie bei Finanz- und '
+        + 'Immobilienthemen. Wir verstehen Ihren Bedarf, erläutern die Anforderungen und '
+        + 'koordinieren die vereinbarten Schritte sorgfältig und transparent – auf Deutsch '
+        + 'oder Arabisch.',
     },
-    detailLabel: 'Mehr zu dieser Leistung →',
+    trustBadges: ['Klare Abläufe', 'Persönliche Betreuung', 'Deutsch und Arabisch'],
+    detailLabel: 'Mehr zur Leistung',
     note:
-      'Wir bieten organisatorische und sprachliche Unterstützung und vermitteln bei Bedarf an '
-      + 'geeignete Fachstellen.',
+      'Sie sind unsicher, welche Leistung zu Ihrem Anliegen passt? Teilen Sie uns mit, was '
+      + 'Sie benötigen – wir leiten Sie an den passenden Bereich weiter.',
   },
 
   why: {
     heading: {
-      eyebrow: 'Über uns',
-      title: 'Warum Zukunft Service?',
+      eyebrow: 'Warum Zukunft Service?',
+      title: 'Guter Service beginnt damit, Ihr Anliegen zu verstehen.',
       lead:
-        'Wir sind kein Amt und keine Kanzlei. Wir sind der Ansprechpartner, der Ihnen hilft, '
-        + 'den Überblick zu behalten.',
+        'Wir hören Ihnen zuerst zu, erklären die einzelnen Schritte verständlich auf Deutsch '
+        + 'oder Arabisch und führen jede Leistung strukturiert, transparent und sorgfältig aus '
+        + '– vom ersten Kontakt bis zum Abschluss.',
     },
     points: [
       {
         id: 'personal',
         icon: 'HandHeart',
-        title: 'Persönliche Betreuung',
+        title: 'Persönliche Betreuung und klare Kommunikation',
         body:
-          'Sie haben einen direkten Ansprechpartner, der Ihr Anliegen kennt – keine wechselnden '
-          + 'Zuständigkeiten.',
+          'Sie haben eine feste Ansprechperson, die Ihr Anliegen kennt und sich zuverlässig '
+          + 'darum kümmert – ohne dass Sie bei jedem Kontakt alles erneut erklären müssen.',
       },
       {
         id: 'one-hand',
         icon: 'Layers',
-        title: 'Alles aus einer Hand',
+        title: 'Unterschiedliche Leistungen. Derselbe hohe Anspruch.',
         body:
-          'Behörden, Dokumente, Studium, Finanzen, Immobilien und Reinigung: viele Leistungen an '
-          + 'einer Stelle.',
+          'Wir bieten Ihnen professionelle Unterstützung bei Behördenangelegenheiten, '
+          + 'Übersetzungen, Studium und Visa sowie bei Finanz- und Immobilienthemen. Daneben '
+          + 'bieten wir einen professionellen Reinigungsservice für private und gewerbliche '
+          + 'Objekte. Jede Leistung ist anders – unser Anspruch an Organisation, '
+          + 'Zuverlässigkeit und Sorgfalt bleibt derselbe.',
       },
       {
         id: 'multilingual',
         icon: 'MessagesSquare',
-        title: 'Mehrsprachige Unterstützung',
+        title: 'Klarheit über Sprachgrenzen hinweg',
         body:
-          'Wir sprechen Deutsch und Arabisch. Die Sprache soll nicht der Grund sein, warum ein '
-          + 'Antrag liegen bleibt.',
+          'Wir kommunizieren mit Ihnen auf Deutsch oder Arabisch und erklären Schreiben und '
+          + 'Abläufe verständlich. So wissen Sie, was benötigt wird, warum es erforderlich ist '
+          + 'und wie es weitergeht.',
       },
       {
         id: 'network',
         icon: 'Network',
-        title: 'Gut vernetzt',
+        title: 'Die passende Expertise zur richtigen Zeit',
         body:
-          'Wir arbeiten mit geeigneten Partnern und Fachstellen zusammen – Übersetzer, '
-          + 'Finanzierungspartner, Beratungsstellen.',
+          'Wenn Ihr Anliegen zusätzliche Expertise erfordert, unterstützen wir Sie bei der '
+          + 'Suche nach einer passenden Fachstelle, etwa einem Übersetzungsbüro, einer Kanzlei '
+          + 'oder einer Beratungsstelle – damit Sie ohne lange Suche oder unnötige Umwege '
+          + 'weiterkommen.',
       },
       {
         id: 'tailored',
         icon: 'Route',
-        title: 'Individuelle Unterstützung',
+        title: 'Wir beginnen mit Ihrer Situation – nicht mit einem Standardpaket.',
         body:
-          'Klare und einfache Schritte: Sie wissen, was von Ihnen verlangt wird und was der '
-          + 'nächste Schritt ist.',
+          'Jedes Anliegen ist anders. Deshalb verstehen wir zuerst Ihren Bedarf und legen '
+          + 'anschließend gemeinsam mit Ihnen den passenden Leistungsumfang und die '
+          + 'erforderlichen Schritte fest – ohne unnötige Zusatzleistungen.',
       },
     ],
   },
@@ -248,86 +331,103 @@ export const deSite: SiteContent = {
   cleaning: {
     heading: {
       eyebrow: 'Reinigungsservice',
-      title: 'Sauberkeit, auf die Sie sich verlassen können',
+      title: 'Sauberkeit, die man sieht. Service, auf den Sie sich verlassen können.',
       lead:
-        'Neben unseren Büro- und Servicedienstleistungen bieten wir professionelle Reinigung '
-        + 'für Privatkunden, Unternehmen und Einrichtungen.',
+        'Ob regelmäßige Reinigung oder einmaliger Einsatz: Wir stimmen die Leistung auf Art, '
+        + 'Größe und Nutzung des Objekts ab – für Privathaushalte, Büros und gewerbliche '
+        + 'Räume, mit klaren Terminen und Sorgfalt bis ins Detail.',
     },
-    items: [
-      'Büros',
-      'Wohnungen',
-      'Häuser',
-      'Schulen',
-      'Restaurants',
-      'Geschäfte',
-      'Praxen',
-      'Gewerberäume',
-      'Treppenhäuser',
-      'Gemeinschaftsflächen',
+    types: CLEANING_TYPES,
+    trustBar: [
+      'Zuverlässiges Team',
+      'Klare Termine',
+      'Abgestimmter Leistungsumfang',
+      'Angebot nach Besichtigung',
     ],
-    cta: {
-      label: 'Reinigung anfragen',
-      hint: 'Ob einmalig oder regelmäßig – wir finden eine passende Lösung für Ihren Bedarf.',
-    },
-    imageAlt:
-      'Reinigungskraft in dunkelgrüner Arbeitskleidung reinigt einen Schreibtisch in einem '
-      + 'hellen Büro.',
+    ctaTitle: 'Ein sauberer Ort beginnt mit einem einfachen Schritt.',
+    ctaBody:
+      'Teilen Sie uns Art, Größe und gewünschten Reinigungsumfang mit. Wir vereinbaren eine '
+      + 'Besichtigung und erstellen anschließend ein klares, passendes Angebot.',
+    cta: { label: 'Reinigungsangebot anfordern' },
+    closing:
+      'Jedes Objekt hat eigene Anforderungen. Nach der Besichtigung stimmen wir einen klaren '
+      + 'Leistungsumfang und passende Termine mit Ihnen ab – für eine einmalige oder '
+      + 'regelmäßige Reinigung.',
+    imageAlt: 'Helles, frisch gereinigtes Büro mit aufgeräumten Arbeitsplätzen.',
   },
 
   scope: {
     heading: {
-      eyebrow: 'Klarheit',
-      title: 'Was wir tun – und was nicht',
+      eyebrow: 'Transparenz schafft Vertrauen',
+      title: 'Von Anfang an wissen Sie, was Sie erwarten können.',
       lead:
-        'Eine klare Grenze schützt Sie und uns. Deshalb steht sie hier und nicht im '
-        + 'Kleingedruckten.',
+        'Wir erläutern Ihnen Leistungsumfang und Ablauf verständlich. Erfordert Ihr Anliegen '
+        + 'eine zugelassene Fachstelle, informieren wir Sie frühzeitig und zeigen Ihnen, an '
+        + 'wen Sie sich wenden können – damit Sie gut informiert entscheiden und in jeder '
+        + 'Phase den Überblick behalten.',
     },
-    doTitle: 'Das übernehmen wir',
-    doItems: [
-      'Unterlagen zusammenstellen, prüfen und vorbereiten',
-      'Formulare und Anträge gemeinsam ausfüllen',
-      'Schriftverkehr und Kommunikation mit Behörden organisieren',
-      'Dokumente aus Syrien und dem Irak organisieren und beschaffen',
-      'Termine, Fristen und nächste Schritte strukturieren',
-      'Übersetzungen über geeignete, vereidigte Übersetzer vermitteln',
+    supportTitle: 'Praktische und strukturierte Unterstützung',
+    supportPoints: [
+      'Organisatorische Unterstützung beim Ausfüllen von Anträgen und Formularen anhand Ihrer Angaben.',
+      'Deutschsprachige Schreiben verständlich wiedergeben und die darin genannten Schritte erläutern.',
+      'Termine vereinbaren und die organisatorische Kommunikation mit Behörden und Fachstellen mit Ihrer Zustimmung koordinieren.',
+      'Unterlagen ordnen und anhand veröffentlichter behördlicher Anforderungen auf formale Vollständigkeit prüfen.',
+      'Beglaubigte Übersetzungen bei beeidigten oder ermächtigten Übersetzern organisieren.',
+      'Begleitung zu Terminen nach Vereinbarung und soweit die jeweilige Stelle dies zulässt – als sprachliche und organisatorische Unterstützung.',
     ],
-    dontTitle: 'Das übernehmen wir nicht',
-    dontItems: [
-      'Keine Rechts-, Steuer- oder Versicherungsberatung',
-      'Keine Vertretung vor Gericht oder gegenüber Behörden',
-      'Keine beglaubigten Übersetzungen im eigenen Namen',
-      'Keine Zusage über den Ausgang eines Verfahrens – darüber entscheiden allein die '
-        + 'zuständigen Stellen',
+    cleaningStrip:
+      'Den Leistungsumfang nach der Besichtigung festlegen und die Reinigung gemäß Angebot '
+      + 'und vereinbarten Terminen ausführen.',
+    referralTitle: 'Für jedes Anliegen die passende Fachstelle',
+    referralIntro:
+      'Bestimmte Leistungen dürfen gesetzlich nur von entsprechend zugelassenen Fachstellen '
+      + 'erbracht werden. Wir weisen Sie frühzeitig darauf hin und helfen Ihnen, den '
+      + 'passenden Kontakt zu finden.',
+    referralCategories: [
+      'Rechtsberatung und Vertretung vor Gericht erfolgen durch Rechtsanwälte oder gesetzlich befugte Stellen.',
+      'Steuerberatung erfolgt durch Steuerberater oder entsprechend befugte Stellen.',
+      'Versicherungs- und Anlageberatung oder -vermittlung erfolgt durch zugelassene Fachpersonen.',
+      'Kredite und Finanzierungen erfolgen über Banken oder zugelassene Vermittler; unsere Unterstützung ist rein organisatorisch.',
+      'Behördliche Entscheidungen treffen ausschließlich die zuständigen Stellen. Wir unterstützen bei Vorbereitung und Organisation und versprechen kein bestimmtes Ergebnis.',
     ],
+    trustTitle: 'Der nächste Schritt bleibt klar',
+    trustBody:
+      'Wenn Ihr Anliegen eine zugelassene Fachstelle erfordert, informieren wir Sie frühzeitig '
+      + 'und helfen bei der Suche nach einem passenden Kontakt. Auswahl und Beauftragung '
+      + 'liegen bei Ihnen; die fachliche Beratung erfolgt ausschließlich durch die jeweilige '
+      + 'Fachstelle.',
     notice: HEDGE_NOTICE,
   },
 
   contact: {
     heading: {
-      eyebrow: 'Kontakt',
-      title: 'Schildern Sie uns kurz Ihr Anliegen',
+      eyebrow: 'Kontaktieren Sie uns',
+      title: 'Teilen Sie uns Ihr Anliegen mit – wir erklären Ihnen den nächsten Schritt.',
       lead:
-        'Sie haben ein Anliegen und wissen nicht, wo Sie anfangen sollen? Schreiben Sie uns '
-        + 'kurz Ihre Situation. Wir prüfen gemeinsam, welche Unterstützung für Ihr Anliegen '
-        + 'passend ist.',
+        'Beschreiben Sie uns Ihr Anliegen in wenigen Sätzen und wählen Sie den Kontaktweg, '
+        + 'der für Sie am besten passt. Wir melden uns bei Ihnen und erklären verständlich, '
+        + 'was für den nächsten Schritt benötigt wird.',
     },
     quickContact: {
       whatsapp: 'Per WhatsApp schreiben',
-      call: 'Anrufen',
-      email: 'E-Mail schreiben',
+      call: 'Jetzt anrufen',
+      email: 'E-Mail senden',
     },
+    privacyNote:
+      'Zum Schutz Ihrer Daten senden Sie bitte in der ersten Nachricht keine persönlichen '
+      + 'Dokumente. Wir teilen Ihnen mit, falls diese später benötigt werden.',
     responseNote:
-      'Außerhalb der Öffnungszeiten erreichen Sie uns jederzeit über das Formular oder per '
-      + 'WhatsApp – wir melden uns in der Regel am nächsten Werktag.',
+      'Sie können uns jederzeit schreiben. Wir antworten Ihnen so bald wie möglich während '
+      + 'unserer Öffnungszeiten.',
   },
 
   info: {
     hoursTitle: 'Öffnungszeiten',
     addressTitle: 'Adresse',
     contactTitle: 'Kontakt',
-    mapsLabel: 'In Google Maps öffnen',
+    mapsLabel: 'Route öffnen',
     closedLabel: 'Geschlossen',
-    hoursNote: 'Termine außerhalb der Öffnungszeiten nach Vereinbarung.',
+    hoursNote: 'Weitere Termine nach Vereinbarung',
   },
 
   footer: {

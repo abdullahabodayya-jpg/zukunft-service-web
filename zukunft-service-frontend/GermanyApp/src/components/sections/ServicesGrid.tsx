@@ -1,9 +1,13 @@
 /**
- * The six services.
+ * The five OFFICE services.
  *
- * Order, slug and icon come from SERVICE_META (locale-invariant), and only the
- * words come from the per-locale card copy - so the German and Arabic grids can
- * never disagree about which service is which or where a card links.
+ * Cleaning is deliberately absent: it is the other arm of the business and has
+ * its own section and page (SC9). The grid renders OFFICE_SERVICES_IN_ORDER,
+ * never SERVICES_IN_ORDER.
+ *
+ * Slug and icon come from SERVICE_META (locale-invariant) and only the words
+ * come from the per-locale card copy, so the German and Arabic grids can never
+ * disagree about which service is which or where a card links.
  *
  * The "read more" arrow is a text glyph chosen per direction rather than a
  * rotated icon: → in German, ← in Arabic, both pointing forward in reading
@@ -16,7 +20,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Reveal } from '@/components/ui/Reveal';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { getServices } from '@/content';
-import { SERVICES_IN_ORDER } from '@/content/shared/services.meta';
+import { OFFICE_SERVICES_IN_ORDER } from '@/content/shared/services.meta';
 import { servicePath } from '@/lib/routes';
 import type { Locale, SiteContent } from '@/types/content';
 
@@ -29,8 +33,20 @@ export function ServicesGrid({ locale, content }: { locale: Locale; content: Sit
       <div className="mx-auto max-w-content">
         <SectionHeading heading={content.services.heading} />
 
-        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES_IN_ORDER.map((meta, index) => {
+        <ul className="mt-6 flex flex-wrap gap-x-3 gap-y-2">
+          {content.services.trustBadges.map((badge) => (
+            <li
+              key={badge}
+              className="inline-flex items-center gap-2 rounded-pill border border-border-default bg-surface-raised px-4 py-1.5 text-body-sm text-text-secondary"
+            >
+              <Icon name="Check" size={15} className="text-brand" />
+              {badge}
+            </li>
+          ))}
+        </ul>
+
+        <ul className="mt-12 grid gap-5 sm:grid-cols-2">
+          {OFFICE_SERVICES_IN_ORDER.map((meta, index) => {
             const service = services[meta.id];
             return (
               <li key={meta.id}>
@@ -39,12 +55,7 @@ export function ServicesGrid({ locale, content }: { locale: Locale; content: Sit
                   href={servicePath(locale, meta.id)}
                   className="focus-ring group flex h-full flex-col gap-3 rounded-lg border border-border-subtle bg-surface-raised p-6 transition-colors duration-200 hover:border-border-accent"
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon name={meta.icon} size={22} className="text-brand" />
-                    <span className="text-caption text-text-muted tabular-nums">
-                      {String(meta.order).padStart(2, '0')}
-                    </span>
-                  </div>
+                  <Icon name={meta.icon} size={22} className="text-brand" />
                   <h3 className="text-title text-text-heading">{service.cardTitle}</h3>
                   <p className="text-body-sm text-text-secondary">{service.cardDescription}</p>
                   <span className="mt-auto pt-2 text-body-sm font-semibold text-accent-text group-hover:text-accent-text-strong">

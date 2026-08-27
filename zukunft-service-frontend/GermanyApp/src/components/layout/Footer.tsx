@@ -13,6 +13,7 @@ import Link from 'next/link';
 
 import { NAP } from '@/content/shared/nap';
 import { formatHours } from '@/lib/format';
+import { Logo } from '@/components/ui/Logo';
 import { navHref } from '@/lib/routes';
 import type { Locale, SiteContent } from '@/types/content';
 
@@ -33,10 +34,18 @@ export function Footer({ locale, content, year }: FooterProps) {
       <div className="mx-auto max-w-page px-gutter py-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <span dir="ltr" className="font-heading text-title text-text-heading">
-              Zukunft&nbsp;Service
-            </span>
-            <p className="mt-3 text-body-sm text-text-secondary">{footer.slogan}</p>
+            {/* The same asset as the header, so the two do not read as two
+                different logos. The supplied file stops at the wordmark, so the
+                descriptor and the slogan stay as text beneath it - they are
+                real brand copy and the footer is where a full lockup belongs. */}
+            <Logo variant="asset" height={64} />
+            <p className="mt-3 text-caption font-semibold uppercase tracking-[0.18em] text-text-secondary">
+              Dienstleistungen &amp; Reinigung
+            </p>
+            <p className="mt-1.5 font-heading text-body-sm italic text-accent-text">
+              Alles aus einer Hand
+            </p>
+            <p className="mt-4 text-body-sm text-text-secondary">{footer.slogan}</p>
           </div>
 
           <nav aria-label={footer.navTitle}>

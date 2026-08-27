@@ -21,7 +21,11 @@ class RequestCreate(BaseModel):
 
     email: EmailStr
 
-    phone: str = Field(default="", max_length=30)
+    phone: str = Field(
+    default="",
+    max_length=30,
+    pattern=r"^$|^\+?[0-9][0-9\s\-()]{6,29}$",
+    )
 
     whatsappOptIn: bool
 

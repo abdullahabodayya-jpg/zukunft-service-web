@@ -7,19 +7,23 @@
  * Arabic (`/ar/%D8%A7%D9%84%D8%AE...`) looks broken when pasted into WhatsApp,
  * which is this audience's primary sharing channel.
  *
- * Because icon, order and slug live here rather than in the per-locale content,
+ * Because icon and slug live here rather than in the per-locale content,
  * it is structurally impossible for the German and Arabic sites to disagree
  * about URLs, iconography or ordering.
  *
  * Taxonomy source: docs/research/01-content-and-ia.md §5.
  */
 
-import { SERVICE_IDS, type ServiceId, type ServiceMeta } from '@/types/content';
+import {
+  OFFICE_SERVICE_IDS,
+  SERVICE_IDS,
+  type ServiceId,
+  type ServiceMeta,
+} from '@/types/content';
 
 export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   authorities: {
     id: 'authorities',
-    order: 1,
     slug: 'einbuergerung-behoerden-dokumente',
     // A stamped document - the single most recognisable object in this world.
     icon: 'Stamp',
@@ -29,7 +33,6 @@ export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   },
   'marriage-translation': {
     id: 'marriage-translation',
-    order: 2,
     slug: 'ehe-uebersetzungen-dokumente',
     // Two scripts - mirrors the whole site's bilingual premise.
     icon: 'Languages',
@@ -38,7 +41,6 @@ export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   },
   'study-visa': {
     id: 'study-visa',
-    order: 3,
     slug: 'studium-universitaet-visa',
     icon: 'GraduationCap',
     arm: 'office',
@@ -46,7 +48,6 @@ export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   },
   finance: {
     id: 'finance',
-    order: 4,
     slug: 'finanzen-kredite-vorsorge',
     // An institution, deliberately NOT a coin or money bag: the copy must not
     // imply that we handle money.
@@ -58,7 +59,6 @@ export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   },
   'real-estate': {
     id: 'real-estate',
-    order: 5,
     slug: 'immobilien-investitionen',
     icon: 'Building2',
     arm: 'office',
@@ -67,18 +67,27 @@ export const SERVICE_META: Record<ServiceId, ServiceMeta> = {
   },
   cleaning: {
     id: 'cleaning',
-    order: 6,
     slug: 'reinigungsservice',
-    icon: 'SprayCan',
-    // The second arm of the business, and card 06 in the grid like every other
-    // service - visual emphasis must never become a structural special case.
+    icon: 'CleaningCart',
+    // The second arm of the business. Deliberately NOT in the office grid
+    // (SC9) - it has its own home section and its own page.
     arm: 'cleaning',
     legalSensitivity: 'low',
   },
 };
 
-/** All six, in the client's own PDF order. Use this to render the grid. */
+/**
+ * All six, in the client's own order. Routing, the sitemap and static params
+ * use this - every one of them has a page.
+ *
+ * Do NOT render the grid from this list; use OFFICE_SERVICES_IN_ORDER.
+ */
 export const SERVICES_IN_ORDER: readonly ServiceMeta[] = SERVICE_IDS.map(
+  (id) => SERVICE_META[id],
+);
+
+/** The five office services, in order. This is what the services grid renders. */
+export const OFFICE_SERVICES_IN_ORDER: readonly ServiceMeta[] = OFFICE_SERVICE_IDS.map(
   (id) => SERVICE_META[id],
 );
 
@@ -100,7 +109,11 @@ export function serviceIdFromSlug(slug: string): ServiceId | undefined {
   return SERVICE_ID_BY_SLUG[slug];
 }
 
-/** The other services, in order - for the "sibling services" row. */
+/**
+ * The other OFFICE services, for the "you might also need" row at the foot of a
+ * service page. Office-only on purpose: cleaning is a different arm of the
+ * business and surfacing it here would undo the separation the grid enforces.
+ */
 export function siblingServices(id: ServiceId, count = 3): readonly ServiceMeta[] {
-  return SERVICES_IN_ORDER.filter((meta) => meta.id !== id).slice(0, count);
+  return OFFICE_SERVICES_IN_ORDER.filter((meta) => meta.id !== id).slice(0, count);
 }

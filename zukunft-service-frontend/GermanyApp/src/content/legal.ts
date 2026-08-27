@@ -8,7 +8,8 @@
  * sentinels in NAP. A missing or defective Impressum is actionable under
  * § 3a UWG and the first warning letter typically costs more than this whole
  * project, so the gap renders as a visible banner rather than being quietly
- * omitted - and `hasUnresolvedPlaceholders()` exists to fail a release check.
+ * omitted. The banner is the only consequence: nothing here stops the build or
+ * the deploy.
  *
  * This is a structural shell, not legal advice. The client should have the
  * final wording reviewed before launch.

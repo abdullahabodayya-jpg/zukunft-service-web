@@ -10,6 +10,7 @@
  */
 
 import { Icon } from '@/components/ui/Icon';
+import { OpeningHours } from '@/components/sections/OpeningHours';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { NAP } from '@/content/shared/nap';
 import { formatHours, waLink } from '@/lib/format';
@@ -25,7 +26,7 @@ export function ContactStrip({ locale, content }: { locale: Locale; content: Sit
       <div className="mx-auto max-w-content">
         <SectionHeading heading={contact.heading} />
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
             href={whatsappHref}
             target="_blank"
@@ -55,22 +56,18 @@ export function ContactStrip({ locale, content }: { locale: Locale; content: Sit
 
         <p className="mt-4 text-body-sm text-text-muted">{contact.responseNote}</p>
 
+        <p className="mt-3 flex max-w-prose items-start gap-2 text-caption text-text-muted">
+          <Icon name="ShieldCheck" size={15} className="mt-0.5" />
+          <span>{contact.privacyNote}</span>
+        </p>
+
         <div className="mt-12 grid gap-8 rounded-xl border border-border-subtle bg-surface-raised p-7 sm:grid-cols-3">
           <div>
             <h3 className="flex items-center gap-2 text-eyebrow text-text-muted">
               <Icon name="Clock" size={16} />
               {info.hoursTitle}
             </h3>
-            <dl className="mt-3 flex flex-col gap-1.5">
-              {hours.map((row) => (
-                <div key={row.day} className="flex items-baseline justify-between gap-3">
-                  <dt className="text-body-sm text-text-secondary">{row.dayLabel}</dt>
-                  <dd className="text-body-sm text-text-body tabular-nums">
-                    {row.isClosed ? info.closedLabel : <bdi dir="ltr">{row.range}</bdi>}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <OpeningHours hours={hours} closedLabel={info.closedLabel} />
           </div>
 
           <div>
