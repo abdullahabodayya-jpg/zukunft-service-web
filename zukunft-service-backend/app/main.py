@@ -29,9 +29,14 @@ cors_origins = [
     if origin.strip()
 ]
 
+is_production = os.getenv("ENVIRONMENT") == "production"
+
 app = FastAPI(
-    title = "Zukunft Service API",
-    version = "1.0.0"
+    title="Zukunft Service API",
+    version="1.0.0",
+    docs_url=None if is_production else "/docs",
+    redoc_url=None if is_production else "/redoc",
+    openapi_url=None if is_production else "/openapi.json",
 )
 
 limiter = Limiter(key_func=get_remote_address)
